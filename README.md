@@ -1,13 +1,14 @@
-# Express Bootstrap Template
+# Prototype for KL Hackathon 2019
 
-A slightly modified version of the folder structure created by `express-generator`.
-The view engine has been set to Pug and the `layout.pug` file has been modified to include
-the CDN links for all Bootstrap 4 dependencies. `users.js` has also been deregistered as a route
-and removed from the repository.
+This project was made during the 6 hour KL Hackathon. It consists of a server-side rendered website that allows civilians to file complaints online which police can review according to jurisdictions. 
 
-## Using the Template
+## Stack
 
-The template can be cloned and used directly in place of use the `express-generator` command.
-Keep in mind though that upon cloning, you need to run `sudo rm -rf .git` from the root of the cloned
-repository so that your local copy will stop tracking changes from the template repository. You can
-then create and push to your own repository.
+Major libraries and services used during the development were:
+
+- Express.js (Server Framework)
+- MongoDB (Database)
+- Mongoose (ORM)
+- Pug (Templating Engine)
+- jQuery (Frontend JS Framework)
+- `express-session` (Session handling API for Express.js)
