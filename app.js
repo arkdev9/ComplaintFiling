@@ -4,9 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session')
+var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
+var apiRouter = require('./routes/api');
 var app = express();
 
 // view engine setup
@@ -15,17 +18,36 @@ app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+mongoose.connect(
+	"mongodb+srv://alphaButtFucker:sullichiku@laniakea-1hblj.mongodb.net/complaints?retryWrites=true",
+	{
+		useNewUrlParser: true,
+		useUnifiedTopology: true
+	},
+	(err) => {
+		if (err) {
+			console.log(err);
+		} else {
+			console.log("Connected to Laniakea");
+		}
+	}
+);
+
 app.use(session({
-	secret: 'keyboard cat',
-	resave: false,
+	secret: 'keyboard fucker',
+	resave: true,
 	saveUninitialized: true,
-	cookie: { secure: true }
+	cookie: { secure: false }
 }));
 
 app.use('/', indexRouter);
+app.use('/api', apiRouter);
 app.use('/auth', authRouter);
 
 // catch 404 and forward to error handler

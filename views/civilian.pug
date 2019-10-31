@@ -1,0 +1,138 @@
+extends layout
+
+block body-pack
+	nav.navbar.navbar-expand-md.navbar-dark.bg-dark
+		a.navbar-brand(href='#')
+		button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarsExampleDefault', aria-controls='navbarsExampleDefault', aria-expanded='false', aria-label='Toggle navigation')
+			span.navbar-toggler-icon
+		#navbarsExampleDefault.collapse.navbar-collapse
+			ul.navbar-nav.mr-auto
+		.dropdown
+			button.btn.btn-primary.dropdown-toggle(type='button', data-toggle='dropdown')
+				span.caret
+			ul.dropdown-menu
+				li
+					button#btnLogout.btn.btn-danger() Logout
+	.jumbotron.pt-3.pb-3
+		h1.display-4 E-Complaint Filing
+		p.lead Lorem ipsum dolor sit amet
+	.container
+		.row
+			.col-md-12.text-left
+				h3 Hello #{firstname} #{lastname}
+		.row.mt-3
+			.col-12.align-center
+				ul.nav.nav-tabs
+					li.nav-item
+						a.nav-link.active(href='#first', role='tab', data-toggle='tab') File Complaint
+					li.nav-item
+						a.nav-link(href='#second', role='tab', data-toggle='tab') Check Status
+		.row.mt-3
+			.col-12.align-center
+				.tab-content
+					#first.tab-pane.fade.show.active(role='tabpanel')
+						form#fileForm
+							.row
+								.col-md-3
+									.form-group
+										label.control-label(for="type") Crime Type
+										select.form-control(name="type")
+											option(value="homicide") Homicide
+											option(value="theft") Theft
+											option(value="domestic_violence") Domestic Violence
+								.col-md-3
+									.form-group
+										label.control-label(for='date') Date
+										input.form-control(type='date', placeholder='Enter the date')
+								.col-md-3
+									.form-group
+										label.control-label(for='area') Area
+										select.form-control(name="area")
+											option(value="kukatpally") Kukatpally
+											option(value="erragadda") Erragadda
+											option(value="manikonda") Manikonda
+								.col-md-3
+									.form-group
+										label.control-label(for='mobile') Mobile Number:
+										input.form-control(placeholder="Enter your contact number" name="mobile")
+							.row
+								.col-md-12
+									.form-group
+										label.control-label(for='complaint_text') Describe The Crime:
+										textarea.form-control(name="crime" rows=10)
+							
+							button#howla.btn.btn-primary(type="submit") Submit
+					#second.tab-pane.fade(role='tabpanel')
+						table.table
+							thead.thead-dark
+								tr
+									th(scope='col') Complaint Number
+									th(scope='col') Area
+									th(scope='col') Status
+									th(scope='col') Date
+							tbody#complaintsBody
+								
+	footer.container
+		p © Company 2017-2019
+	
+block extra-scripts
+	script.
+		document.getElementById("btnLogout").addEventListener('click', function() {
+			fetch("/auth/logout", {
+				method: "GET"
+			}).then(function (res) {
+				alert("Logged out");
+				document.location.href="/";
+			}).catch(function (res) {
+				alert(res);
+			});
+		});
+		$("#second").on('click', function() {
+			fetch('/api/complaints', { 
+				method: "GET"
+			}).then(function (res) {
+				// Render complaints to complaintsBody
+
+				$("#complaintsBody").innerHTML = pack;
+			}).catch(function (err) {
+				alert(err);
+			})
+		});
+		$('#fileForm').submit(function(e) {
+			e.preventDefault();
+
+			// get all the inputs into an array.
+			var $inputs = $('#fileForm :input');
+
+			// not sure if you wanted this, but I thought I'd add it.
+			// get an associative array of just the values.
+			var values = {};
+			$inputs.each(function() {
+				values[this.name] = $(this).val();
+			});
+
+			console.log(values);
+			fetch("/api/file", {
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				method: "POST",
+				body: JSON.stringify(values)
+			}).then( function(res) {
+				console.log(res);
+				alert(res);
+			}).catch(function (res) {
+				alert(res);
+			});
+		});
+		function renderBody(complaints) {
+			var body = "";
+			complaints.forEach(function (complaint) {
+				body += "<tr>";
+				body += "<td>" + complaint.complaint_number + "</td>";
+				body += "<td>" + complaint.area + "</td>";
+				body += "<td>" + complaint.status + "</td>";
+				body += "<td>" + complaint.date + "</td>";
+				body += "</tr>";
+			});
+		}

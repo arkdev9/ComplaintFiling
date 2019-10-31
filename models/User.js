@@ -4,33 +4,33 @@ const Schema = mongoose.Schema;
 
 const SALT_WORK_FACTOR = 5;
 
-const Student = new Schema({
+const User = new Schema({
 	password: { type: String, required: true },
-	username: { type: String, required: true },
-	email: { type: String, required: true }
+	firstname: { type: String, required: true },
+	lastname: { type: String, required: true },
+	email: { type: String, required: true },
+	mobile: { type: String, required: true },
+	role: { type: String, required: true }
 });
 
-// ** FOR WHATEVER MOTHERFUCKING REASON, LAMBDA DECLARATIONS DON'T WORK			**
-// ** WITH MONGOOSE MODEL METHODS. DON'T USE THEM IN THIS FILE YOU DUMB FUCK.	**
-
-Student.pre('save', function (next) {
-	const student = this;
+User.pre('save', function (next) {
+	const user = this;
 
 	// Only hash the password if it has been modified (or is new)
-	if (!student.isModified('password')) return next();
+	if (!user.isModified('password')) return next();
 
 	// Hash the password again
-	bcrypt.hash(student.password, SALT_WORK_FACTOR, function (err, hash) {
+	bcrypt.hash(user.password, SALT_WORK_FACTOR, function (err, hash) {
 		console.log(hash);
 		if (err) return next(err);
 
 		// Set the hash in place of the cleartext password
-		student.password = hash;
+		user.password = hash;
 		next();
 	});
 });
 
-Student.methods.comparePassword = function (inp_pass, cb) {
+User.methods.comparePassword = function (inp_pass, cb) {
 	console.log(this.password);
 	bcrypt.compare(inp_pass, this.password, function (err, isMatch) {
 		console.log(isMatch);
@@ -39,4 +39,4 @@ Student.methods.comparePassword = function (inp_pass, cb) {
 	});
 };
 
-module.exports = mongoose.model('Student', Student, 'students');
+module.exports = mongoose.model('User', User, 'users');
